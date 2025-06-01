@@ -7,7 +7,7 @@ import kotlinx.serialization.json.Json
 @Serializable
 data class FloorInfo(
     @SerialName("WocasId") val wocasId: String,
-    @SerialName("Description") val description: String,
+    @SerialName("Description") val description: String?,
     @SerialName("HospiteerDate") val hospiteerDate: String?,
     @SerialName("PreferenceSmokingAllowed") val smokingAllowed: Boolean,
     @SerialName("PreferencePetsAllowed") val petsAllowed: Boolean,

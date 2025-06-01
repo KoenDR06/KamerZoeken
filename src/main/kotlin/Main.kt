@@ -9,8 +9,16 @@ data class ReactableOffer(
 )
 
 fun main() {
+    val inputFile = File("rooms-scanned.txt")
+
+    val roomsFound = if (inputFile.exists()) inputFile.readLines() else listOf()
+
     val rooms = getRooms().filter { room ->
-        room.unitType == config.general.unitType
+        room.unitType == config.general.unitType && room.wocasId !in roomsFound
+    }
+    if (rooms.isEmpty()) {
+        println("No suitable offers were found, quitting.")
+        return
     }
     val offers = getOffers(rooms.map { it.wocasId }).offers.filter { offer ->
         offer.adres[0].plaats !in listOf(
@@ -62,12 +70,14 @@ fun main() {
 
         str.append("| Roken | ${if (it.floor.floorInfo.smokingAllowed) "✅ Mag" else "❌ Mag niet"} |\n")
         str.append("| Huisdieren | ${if (it.floor.floorInfo.petsAllowed) "✅ Mogen" else "❌ Mogen niet"} |\n")
+        str.append("| Reacties | ${it.floor.applicantCount} al gereageerd.")
 
         str.append("\n")
-        str.append("### Message: \n\n${it.floor.floorInfo.description}\n")
+        str.append("### Message: \n\n${it.floor.floorInfo.description ?: "Deze pannekoeken hebben geen bericht achtergelaten"}\n")
 
         str.append("\n\n")
     }
     out.writeText(str.toString())
+    inputFile.writeText(roomsFound.joinToString("\n") + rooms.joinToString("\n") { it.wocasId })
     println("${coupled.size} offers found, wrote to $fileName")
 }
