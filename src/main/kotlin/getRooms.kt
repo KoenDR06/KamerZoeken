@@ -3,8 +3,6 @@ package me.koendev
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
 
 @Serializable
 data class Image(

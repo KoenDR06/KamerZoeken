@@ -70,7 +70,7 @@ fun main() {
 
         str.append("| Roken | ${if (it.floor.floorInfo.smokingAllowed) "✅ Mag" else "❌ Mag niet"} |\n")
         str.append("| Huisdieren | ${if (it.floor.floorInfo.petsAllowed) "✅ Mogen" else "❌ Mogen niet"} |\n")
-        str.append("| Reacties | ${it.floor.applicantCount} al gereageerd.")
+        str.append("| Reacties | ${it.floor.applicantCount} al gereageerd. |\n")
 
         str.append("\n")
         str.append("### Message: \n\n${it.floor.floorInfo.description ?: "Deze pannekoeken hebben geen bericht achtergelaten"}\n")
