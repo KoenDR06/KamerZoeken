@@ -3,6 +3,7 @@ package me.koendev
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import me.koendev.utils.println
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
 
@@ -80,8 +81,10 @@ data class Adres(
 )
 
 
-fun getOffers(): Offers {
-    val response = getEndpoint("OData-mv?EENHEID_H?\$filter=((((((((((((((((((((((eenheidnummer%20eq%2033700034)%20or%20(eenheidnummer%20eq%2020214020))%20or%20(eenheidnummer%20eq%2026912101))%20or%20(eenheidnummer%20eq%2026912038))%20or%20(eenheidnummer%20eq%2082200297))%20or%20(eenheidnummer%20eq%2021001262))%20or%20(eenheidnummer%20eq%2036900015))%20or%20(eenheidnummer%20eq%2052000240))%20or%20(eenheidnummer%20eq%2051800177))%20or%20(eenheidnummer%20eq%2036400433))%20or%20(eenheidnummer%20eq%2051900083))%20or%20(eenheidnummer%20eq%2036400019))%20or%20(eenheidnummer%20eq%2046200340))%20or%20(eenheidnummer%20eq%2029602069))%20or%20(eenheidnummer%20eq%2033700216))%20or%20(eenheidnummer%20eq%2011010008))%20or%20(eenheidnummer%20eq%2051900057))%20or%20(eenheidnummer%20eq%2021002009))%20or%20(eenheidnummer%20eq%2052000218))%20or%20(eenheidnummer%20eq%2036400091))%20or%20(eenheidnummer%20eq%2046200669))%20or%20(eenheidnummer%20eq%2029601023))&\$expand=ADRES_H!(\$select=plaats,postcode,straatnaam,nummer,toevoeging,aanduiding,locatie,letter,oid),EENHEID_HUUR!(\$select=eenheidnummer,bruto_huur,enh_nettohuur,enh_object,contract_type),HUUROVEREENKOMST_H!(\$select=dcnnummer,einddatum,enhheefthuu),ASP_TOTAAL_C!(\$select=eenheidnummer,totopp,totoppgem),ASSSUBJECTPERSK_H!(\$select=enhheeftkenm,pkheeftasp,waarde,kenwaarde;\$expand=KENMERK_H!(\$select=code))&\$select=eenheidnummer,adrheeftenh,object,soort_product")
+fun getOffers(ids: List<String>): Offers {
+    val offerFilter = ids.joinToString("%20or%20") { "eenheidnummer%20eq%20$it" }
+
+    val response = getEndpoint("OData-mv?EENHEID_H?\$filter=${offerFilter}&\$expand=ADRES_H!(\$select=plaats,postcode,straatnaam,nummer,toevoeging,aanduiding,locatie,letter,oid),EENHEID_HUUR!(\$select=eenheidnummer,bruto_huur,enh_nettohuur,enh_object,contract_type),HUUROVEREENKOMST_H!(\$select=dcnnummer,einddatum,enhheefthuu),ASP_TOTAAL_C!(\$select=eenheidnummer,totopp,totoppgem),ASSSUBJECTPERSK_H!(\$select=enhheeftkenm,pkheeftasp,waarde,kenwaarde;\$expand=KENMERK_H!(\$select=code))&\$select=eenheidnummer,adrheeftenh,object,soort_product")
 
     return Json.decodeFromString<Offers>(response)
 }

@@ -16,7 +16,7 @@ data class FloorInfo(
 )
 
 @Serializable
-data class RoomInfo(
+data class Floor(
     @SerialName("ExpireBy") val expireBy: String,
     @SerialName("RemainingTime") val remainingTime: String,
     @SerialName("ApplicantCount") val applicantCount: Int,
@@ -41,8 +41,8 @@ data class RoomInfo(
     @SerialName("Kind") val kind: String,
 )
 
-fun getFloorInfo(room: Room): FloorInfo {
+fun getFloorInfo(room: Room): Floor {
     val response = getEndpoint("offer/${room.flowId}")
 
-    return Json.decodeFromString<RoomInfo>(response).floorInfo
+    return Json.decodeFromString<Floor>(response)
 }
