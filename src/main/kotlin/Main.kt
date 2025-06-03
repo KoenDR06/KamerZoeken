@@ -54,10 +54,10 @@ fun main() {
 
         str.append("## [${address.straatnaam} ${address.nummer}, ${address.plaats.lowercase().capitalize()}](https://sshxl.nl/nl/aanbod/${it.room.flowId}-${address.straatnaam.lowercase().replace(" ", "-")})\n")
 
-        str.append("\n| Categorie | Waarde |\n")
-        str.append("|-----------|--------|\n")
+        str.append("\n| Categorie   | Waarde             |\n")
+        str.append("|-------------|--------------------|\n")
 
-        str.append("| Huisgenoten | ${it.room.numberOfRooms-1} |\n")
+        str.append("| Huisgenoten | ${(it.room.numberOfRooms-1).toString().padEnd(18, ' ')} |\n")
 
         val genderString = when (it.floor.floorInfo.genderPreference) {
             "none" -> "Geen voorkeur"
@@ -65,12 +65,12 @@ fun main() {
             "female" -> "Vrouw"
             else -> it.floor.floorInfo.genderPreference
         }
-        str.append("| Geslacht | $genderString |\n")
+        str.append("| Geslacht    | ${genderString.padEnd(18, ' ')} |\n")
 
 
-        str.append("| Roken | ${if (it.floor.floorInfo.smokingAllowed) "✅ Mag" else "❌ Mag niet"} |\n")
-        str.append("| Huisdieren | ${if (it.floor.floorInfo.petsAllowed) "✅ Mogen" else "❌ Mogen niet"} |\n")
-        str.append("| Reacties | ${it.floor.applicantCount} al gereageerd. |\n")
+        str.append("| Roken       | ${(if (it.floor.floorInfo.smokingAllowed) "✅ Mag" else "❌ Mag niet").padEnd(17, ' ')} |\n")
+        str.append("| Huisdieren  | ${(if (it.floor.floorInfo.petsAllowed) "✅ Mogen" else "❌ Mogen niet").padEnd(17, ' ')} |\n")
+        str.append("| Reacties    | ${it.floor.applicantCount.toString().padStart(3, ' ')} al gereageerd. |\n")
 
         str.append("\n")
         str.append("### Message: \n\n${it.floor.floorInfo.description ?: "Deze pannekoeken hebben geen bericht achtergelaten"}\n")
