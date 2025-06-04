@@ -2,7 +2,7 @@
 unitType = "Kamer" # Kamer of Woning
 allowZeist = true # Of je ook in Zeist wil zoeken
 
-smoking = 0 # 0: geen voorkeur, -1: ik wil dat er niet gerookt mag worden, 1: Ik wil dat er gerookt mag worden
+smoking = -1 # 0: geen voorkeur, -1: ik wil dat er niet gerookt mag worden, 1: Ik wil dat er gerookt mag worden
 pets = 0 # 0: geen voorkeur, -1: ik wil dat er geen huisdieren mogen, 1: Ik wil dat huisdieren mogen
 
 [gender] # Nu zoek je dus op kamers die zoeken naar een man of geen voorkeur hebben
