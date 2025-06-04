@@ -21,11 +21,9 @@ fun main() {
         return
     }
     val offers = getOffers(rooms.map { it.wocasId }).offers.filter { offer ->
-        offer.adres[0].plaats !in listOf(
-            "ZWOLLE",
-            "GRONINGEN",
-            "TILBURG"
-        ) + if (!config.general.allowZeist) "ZEIST" else ""
+        offer.adres[0].plaats in listOf(
+            "UTRECHT",
+        ) + if (config.general.allowZeist) "ZEIST" else ""
     }
 
     val coupled = rooms.mapNotNull { room ->
@@ -77,7 +75,7 @@ fun main() {
 
         str.append("\n\n")
     }
-    out.writeText(str.toString())
-    inputFile.writeText(roomsFound.joinToString("\n") + rooms.joinToString("\n") { it.wocasId })
+    out.writeText(out.readText() + "\n\n" + str.toString())
+    inputFile.writeText(roomsFound.joinToString("\n") + "\n" + rooms.joinToString("\n") { it.wocasId })
     println("${coupled.size} offers found, wrote to $fileName")
 }

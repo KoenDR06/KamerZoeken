@@ -27,7 +27,7 @@ data class Room(
     @SerialName("ContractStartDate") val contractStartDate: String,
     @SerialName("UnitType") val unitType: String,
     @SerialName("NumberOfRooms") val numberOfRooms: Int,
-    @SerialName("Image") val image: Image,
+    @SerialName("Image") val image: Image?,
     @SerialName("ContractType") val contractType: String,
     @SerialName("FlowId") val flowId: Int,
     @SerialName("WocasId") val wocasId: String,
