@@ -44,6 +44,7 @@ fun main() {
 
     val fileName = "offers.md"
     val out = File(fileName)
+    if (!out.exists()) out.createNewFile()
 
     val str = StringBuilder()
 
