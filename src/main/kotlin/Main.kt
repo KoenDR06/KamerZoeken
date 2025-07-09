@@ -1,6 +1,12 @@
 package me.koendev
 
+import io.github.cdimascio.dotenv.Dotenv
 import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+
+val dotEnv = Dotenv.load()
 
 data class ReactableOffer(
     val room: Room,
@@ -9,12 +15,8 @@ data class ReactableOffer(
 )
 
 fun main() {
-    val inputFile = File("rooms-scanned.txt")
-
-    val roomsFound = if (inputFile.exists()) inputFile.readLines() else listOf()
-
     val rooms = getRooms().filter { room ->
-        room.unitType == config.general.unitType && room.wocasId !in roomsFound
+        room.unitType == config.general.unitType
     }
     if (rooms.isEmpty()) {
         println("No suitable offers were found, quitting.")
@@ -33,13 +35,20 @@ fun main() {
     }.filter {
         val gender = it.floor.floorInfo.genderPreference
 
+        val date = it.room.expireBy.take(10)
+        val date1 = LocalDate.now()
+        val date2 = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val daysLeft = ChronoUnit.DAYS.between(date1, date2)
+
         ((gender == "female" && config.gender.female) ||
         (gender == "male" && config.gender.male) ||
         (gender == "none" && config.gender.none)) &&
 
-        ((config.general.smoking == -1 && !it.floor.floorInfo.smokingAllowed) || (config.general.smoking == 1 && it.floor.floorInfo.smokingAllowed) || config.general.smoking == 0) &&
+        ((config.general.smoking == -1 && !(it.floor.floorInfo.smokingAllowed ?: true)) || (config.general.smoking == 1 && it.floor.floorInfo.smokingAllowed ?: true) || config.general.smoking == 0) &&
 
-        ((config.general.pets == -1 && !it.floor.floorInfo.petsAllowed) || (config.general.pets == 1 && it.floor.floorInfo.petsAllowed) || config.general.pets == 0)
+        ((config.general.pets == -1 && !it.floor.floorInfo.petsAllowed) || (config.general.pets == 1 && it.floor.floorInfo.petsAllowed) || config.general.pets == 0) &&
+
+        daysLeft == 0L
     }
 
     val fileName = "offers.md"
@@ -67,16 +76,21 @@ fun main() {
         str.append("| Geslacht    | ${genderString.padEnd(18, ' ')} |\n")
 
 
-        str.append("| Roken       | ${(if (it.floor.floorInfo.smokingAllowed) "✅ Mag" else "❌ Mag niet").padEnd(17, ' ')} |\n")
+        str.append("| Roken       | ${(if (it.floor.floorInfo.smokingAllowed ?: true) "✅ Mag" else "❌ Mag niet").padEnd(17, ' ')} |\n")
         str.append("| Huisdieren  | ${(if (it.floor.floorInfo.petsAllowed) "✅ Mogen" else "❌ Mogen niet").padEnd(17, ' ')} |\n")
-        str.append("| Reacties    | ${it.floor.applicantCount.toString().padStart(3, ' ')} al gereageerd. |\n")
+        str.append("| Reacties    | ${it.floor.potentialPosition} van de ${it.floor.applicantCount.toString().padStart(3, ' ')}.    |\n")
+
+        val date = it.room.expireBy.take(10)
+        val date1 = LocalDate.now()
+        val date2 = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val daysLeft = ChronoUnit.DAYS.between(date1, date2)
+        str.append("| Tijd over   | $daysLeft dagen over.      |\n")
 
         str.append("\n")
         str.append("### Message: \n\n${it.floor.floorInfo.description ?: "Deze pannekoeken hebben geen bericht achtergelaten"}\n")
 
         str.append("\n\n")
     }
-    out.writeText(out.readText() + "\n\n" + str.toString())
-    inputFile.writeText(roomsFound.joinToString("\n") + "\n" + rooms.joinToString("\n") { it.wocasId })
+    out.writeText(str.toString())
     println("${coupled.size} offers found, wrote to $fileName")
 }

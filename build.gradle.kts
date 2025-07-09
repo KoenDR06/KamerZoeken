@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation("de.thelooter:toml4j:0.8.1")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 }
 
 tasks.test {

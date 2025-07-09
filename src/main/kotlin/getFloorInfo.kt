@@ -9,7 +9,7 @@ data class FloorInfo(
     @SerialName("WocasId") val wocasId: String,
     @SerialName("Description") val description: String?,
     @SerialName("HospiteerDate") val hospiteerDate: String?,
-    @SerialName("PreferenceSmokingAllowed") val smokingAllowed: Boolean,
+    @SerialName("PreferenceSmokingAllowed") val smokingAllowed: Boolean?,
     @SerialName("PreferencePetsAllowed") val petsAllowed: Boolean,
     @SerialName("PreferenceGender") val genderPreference: String,
     @SerialName("NumberOfUnits") val numberOfUnits: Int,

@@ -21,6 +21,7 @@ fun buildRequest(path: String): HttpRequest {
             listOf(
                 "cookie_consent_analytics=no",
                 "cookie_consent=no",
+                "SSHContext=${dotEnv["AUTH"]}"
             ).joinToString("; ")
         )
         .GET()

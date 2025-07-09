@@ -42,4 +42,4 @@ bin/
 .DS_Store
 
 offers.md
-rooms-scanned.txt
+.env
