@@ -78,7 +78,8 @@ fun main() {
 
         str.append("| Roken       | ${(if (it.floor.floorInfo.smokingAllowed ?: true) "✅ Mag" else "❌ Mag niet").padEnd(17, ' ')} |\n")
         str.append("| Huisdieren  | ${(if (it.floor.floorInfo.petsAllowed) "✅ Mogen" else "❌ Mogen niet").padEnd(17, ' ')} |\n")
-        str.append("| Reacties    | ${it.floor.potentialPosition} van de ${it.floor.applicantCount.toString().padStart(3, ' ')}.    |\n")
+        val positionString = "${it.floor.potentialPosition} / ${it.floor.applicantCount}."
+        str.append("| Reacties    | ${positionString.padEnd(18, ' ')} |\n")
 
         val date = it.room.expireBy.take(10)
         val date1 = LocalDate.now()
