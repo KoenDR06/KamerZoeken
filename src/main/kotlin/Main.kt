@@ -75,7 +75,6 @@ fun main() {
         }
         str.append("| Geslacht    | ${genderString.padEnd(18, ' ')} |\n")
 
-
         str.append("| Roken       | ${(if (it.floor.floorInfo.smokingAllowed ?: true) "✅ Mag" else "❌ Mag niet").padEnd(17, ' ')} |\n")
         str.append("| Huisdieren  | ${(if (it.floor.floorInfo.petsAllowed) "✅ Mogen" else "❌ Mogen niet").padEnd(17, ' ')} |\n")
         val positionString = "${it.floor.potentialPosition} / ${it.floor.applicantCount}."
@@ -88,6 +87,10 @@ fun main() {
         str.append("| Tijd over   | $daysLeft dagen over.      |\n")
 
         str.append("\n")
+
+        val etage = getEtage(it.offer.assSubjectPersk.first { it.pkHeeftAsp == 52.0 }.waarde!!)
+
+        str.append("![Foto](${etage.photos[0].etagePhoto[0].url})\n\n")
         str.append("### Message: \n\n${it.floor.floorInfo.description ?: "Deze pannekoeken hebben geen bericht achtergelaten"}\n")
 
         str.append("\n\n")
