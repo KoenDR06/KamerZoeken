@@ -10,7 +10,7 @@ data class FloorInfo(
     @SerialName("Description") val description: String?,
     @SerialName("HospiteerDate") val hospiteerDate: String?,
     @SerialName("PreferenceSmokingAllowed") val smokingAllowed: Boolean?,
-    @SerialName("PreferencePetsAllowed") val petsAllowed: Boolean,
+    @SerialName("PreferencePetsAllowed") val petsAllowed: Boolean?,
     @SerialName("PreferenceGender") val genderPreference: String,
     @SerialName("NumberOfUnits") val numberOfUnits: Int,
 )
@@ -41,8 +41,8 @@ data class Floor(
     @SerialName("Kind") val kind: String,
 )
 
-fun getFloorInfo(room: Room): Floor {
-    val response = getEndpoint("offer/${room.flowId}")
+fun getFloorInfo(room: Room, session: String): Floor {
+    val response = getEndpoint("offer/${room.flowId}", session)
 
     return Json.decodeFromString<Floor>(response)
 }

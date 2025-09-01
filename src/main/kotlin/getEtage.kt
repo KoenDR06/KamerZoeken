@@ -33,8 +33,8 @@ data class EtagePhotoItem(
     @SerialName("Photo") val url: String
 )
 
-fun getEtage(id: String): Etage {
+fun getEtage(id: String): Etage? {
     val response = getEndpoint("OData/Etage?\$filter=(EtageWocasId%20eq%20'$id')&\$expand=Etage_EtagePhoto!(\$select=Id,EtagePhotoId,EtageId;\$expand=EtagePhoto!(\$select=Id,Photo))&\$select=Id,EtageWocasId")
 
-    return Json.decodeFromString<Etages>(response).offers.first()
+    return Json.decodeFromString<Etages>(response).offers.firstOrNull()
 }

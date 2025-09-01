@@ -1,6 +1,7 @@
 package me.koendev
 
 import io.github.cdimascio.dotenv.Dotenv
+import me.koendev.utils.println
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -15,23 +16,30 @@ data class ReactableOffer(
 )
 
 fun main() {
+    val sessionToken = auth()
+
+    print("Getting rooms")
     val rooms = getRooms().filter { room ->
         room.unitType == config.general.unitType
     }
     if (rooms.isEmpty()) {
-        println("No suitable offers were found, quitting.")
+        System.err.println("No suitable offers were found, quitting.")
         return
     }
+
     val offers = getOffers(rooms.map { it.wocasId }).offers.filter { offer ->
         offer.adres[0].plaats in listOf(
             "UTRECHT",
         ) + if (config.general.allowZeist) "ZEIST" else ""
     }
 
+    print("\rFiltering on personal filters")
+    var index = 0
     val coupled = rooms.mapNotNull { room ->
         val offer: Offer? = offers.find { room.wocasId.toInt() == it.eenheidNummer.toInt() }
 
-        if (offer == null) null else ReactableOffer(room, offer, getFloorInfo(room))
+        print("\rFiltering per room: ${index++} / ${rooms.size}")
+        if (offer == null) null else ReactableOffer(room, offer, getFloorInfo(room, sessionToken))
     }.filter {
         val gender = it.floor.floorInfo.genderPreference
 
@@ -40,13 +48,16 @@ fun main() {
         val date2 = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         val daysLeft = ChronoUnit.DAYS.between(date1, date2)
 
+        val smoking = it.floor.floorInfo.smokingAllowed ?: true
+        val pets = it.floor.floorInfo.petsAllowed ?: false
+
         ((gender == "female" && config.gender.female) ||
         (gender == "male" && config.gender.male) ||
         (gender == "none" && config.gender.none)) &&
 
-        ((config.general.smoking == -1 && !(it.floor.floorInfo.smokingAllowed ?: true)) || (config.general.smoking == 1 && it.floor.floorInfo.smokingAllowed ?: true) || config.general.smoking == 0) &&
+        ((config.general.smoking == -1 && !smoking) || (config.general.smoking == 1 && smoking) || config.general.smoking == 0) &&
 
-        ((config.general.pets == -1 && !it.floor.floorInfo.petsAllowed) || (config.general.pets == 1 && it.floor.floorInfo.petsAllowed) || config.general.pets == 0) &&
+        ((config.general.pets == -1 && !pets) || (config.general.pets == 1 && pets) || config.general.pets == 0) &&
 
         daysLeft == 0L
     }
@@ -76,7 +87,7 @@ fun main() {
         str.append("| Geslacht    | ${genderString.padEnd(18, ' ')} |\n")
 
         str.append("| Roken       | ${(if (it.floor.floorInfo.smokingAllowed ?: true) "✅ Mag" else "❌ Mag niet").padEnd(17, ' ')} |\n")
-        str.append("| Huisdieren  | ${(if (it.floor.floorInfo.petsAllowed) "✅ Mogen" else "❌ Mogen niet").padEnd(17, ' ')} |\n")
+        str.append("| Huisdieren  | ${(if (it.floor.floorInfo.petsAllowed ?: false) "✅ Mogen" else "❌ Mogen niet").padEnd(17, ' ')} |\n")
         val positionString = "${it.floor.potentialPosition} / ${it.floor.applicantCount}."
         str.append("| Reacties    | ${positionString.padEnd(18, ' ')} |\n")
 
@@ -90,11 +101,11 @@ fun main() {
 
         val etage = getEtage(it.offer.assSubjectPersk.first { it.pkHeeftAsp == 52.0 }.waarde!!)
 
-        str.append("![Foto](${etage.photos[0].etagePhoto[0].url})\n\n")
+        if (etage != null) str.append("![Foto](${etage.photos[0].etagePhoto[0].url})\n\n")
         str.append("### Message: \n\n${it.floor.floorInfo.description ?: "Deze pannekoeken hebben geen bericht achtergelaten"}\n")
 
         str.append("\n\n")
     }
     out.writeText(str.toString())
-    println("${coupled.size} offers found, wrote to $fileName")
+    println("\r${coupled.size} offers found, wrote to $fileName")
 }

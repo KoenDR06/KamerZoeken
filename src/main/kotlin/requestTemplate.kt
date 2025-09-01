@@ -10,7 +10,7 @@ import java.net.http.HttpResponse
  *
  * @return a HttpRequest with all the necessary properties to GET the endpoint.
  */
-fun buildRequest(path: String): HttpRequest {
+fun buildRequest(path: String, session: String): HttpRequest {
     return HttpRequest.newBuilder()
         .uri(URI("https://www.sshxl.nl/api/v1/$path"))
         .header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0")
@@ -21,19 +21,19 @@ fun buildRequest(path: String): HttpRequest {
             listOf(
                 "cookie_consent_analytics=no",
                 "cookie_consent=no",
-                "SSHContext=${dotEnv["AUTH"]}"
+                "SSHContext=$session"
             ).joinToString("; ")
         )
         .GET()
         .build()
 }
 
-fun getEndpoint(endpoint: String): String {
+fun getEndpoint(endpoint: String, session: String = ""): String {
     val client = HttpClient.newBuilder()
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
 
-    val request = buildRequest(endpoint)
+    val request = buildRequest(endpoint, session)
 
     return client.send(request, HttpResponse.BodyHandlers.ofString()).body()
 }
